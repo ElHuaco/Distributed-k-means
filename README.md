@@ -1,13 +1,14 @@
 # Distributed-k-means
 
 - ## Why did we choose Dask VS Spark?
-- ## How can we download in batches the dataset to have a sensical distributed operation?
+  - https://docs.dask.org/en/stable/spark.html#summary
+- ## How can we download in a distributed manner the dataset?
+  - Dask takes care of this via the ``dask_ml.datasets`` package.
 - ## What is the Dask k-means|| API?
 Below is a Dask _k-means||_ API snippet, extracted from the [dask examples webpage](https://examples.dask.org/machine-learning/training-on-large-datasets.html?highlight=k%20means).
 ``` python
 import dask_ml.cluster
 import dask_ml.datasets
-# Scale up: increase n_samples or n_features
 X, y = dask_ml.datasets.make_blobs(n_samples=1000000,
                                    chunks=100000,
                                    random_state=0,
