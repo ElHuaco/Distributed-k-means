@@ -14,7 +14,7 @@ The goal of this project is to implement efficiently the **_k-means||_** algorit
     - It's possible that the algorithm doesn't return a set of candidate centroids $C$ with $|C| \geq k$. We have two options once this happens: either run additional iterations of the algorithm or choose randomly points until $|C| \geq k$ is satisfied.
 - ## TODO: What optimizations regarding Dask have we considered?
   - When did we use ``compute()`` and why
-  - Chunks usage: Different arrangements of NumPy arrays will be faster or slower for different algorithms. [See documentation](https://docs.dask.org/en/stable/array-chunks.html).
+  - Chunks usage: Different arrangements of NumPy arrays will be faster or slower for different algorithms. [See documentation](https://docs.dask.org/en/stable/array-chunks.html). We choose a chunk size of $(0.75\cdot\text{worker RAM, number of features})$. Because we will use repeately the features for calculating distances, but the
 - ## TODO: Results of performance benchmarking and comparison with Dask's ``KMeans()``
 Below is the Dask **_k-means||_** API, from [dask's examples](https://examples.dask.org/machine-learning/training-on-large-datasets.html?highlight=k%20means).
 ``` python
