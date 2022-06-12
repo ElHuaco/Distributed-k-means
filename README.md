@@ -10,6 +10,7 @@ The goal of this project is to implement efficiently the **_k-means||_** algorit
 - ## TODO: What optimizations regarding the algorithm have we considered?
     - Once $|x_i-c_j|^2$ is computed for a $(x_i \in X,\text{ } c_j \in C)$ pair, and taken into $\phi_X(C)$, we don't need to compute it again. Moreover, we only need to store it if it's the minimun distance so far.
     - Check if we needed O(1) instead of O($\log\phi$) iterations in the end
+    - Original Dask implementation doesn't follow Step 7 of the *_k-means||_* and just goes to a regular *_k-means++_* with the candidate centroids in Step 8.
 - ## TODO: What optimizations regarding Dask have we considered?
   - When did we use ``compute()`` and why
 - ## TODO: Performance benchmarking and comparison with Dask's ``KMeans()``
