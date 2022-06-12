@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 *.swp
+.DS_Store
 .ipy_checkpoints/
