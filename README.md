@@ -18,6 +18,6 @@ Below is the Dask **_k-means||_** API, from [dask's examples](https://examples.d
 km = dask_ml.cluster.KMeans(n_clusters=3, init_max_iter=2, oversampling_factor=10)
 km.fit(X)
 ```
-- ## TODO: Go through Dask Chunk 
+- ## TODO: Go through Dask Chunks
     [dask's chunks](https://docs.dask.org/en/stable/array-chunks.html).
  
