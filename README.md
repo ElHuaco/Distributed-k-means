@@ -13,7 +13,7 @@ The goal of this project is to implement efficiently the **_k-means||_** algorit
 - ## TODO: What optimizations regarding Dask have we considered?
   - When did we use ``compute()`` and why
 - ## TODO: Performance benchmarking and comparison with Dask's ``KMeans()``
-Below is a Dask **_k-means||_** API snippet, from [dask's examples](https://examples.dask.org/machine-learning/training-on-large-datasets.html?highlight=k%20means). It uses the ``dask_ml.cluster`` package.
+Below is the Dask **_k-means||_** API, from [dask's examples](https://examples.dask.org/machine-learning/training-on-large-datasets.html?highlight=k%20means).
 ``` python
 km = dask_ml.cluster.KMeans(n_clusters=3, init_max_iter=2, oversampling_factor=10)
 km.fit(X)
