@@ -15,6 +15,8 @@ The goal of this project is to implement efficiently the **_k-means||_** algorit
 - ## TODO: What optimizations regarding Dask have we considered?
   - When did we use ``compute()`` and why
   - Chunks usage: Different arrangements of NumPy arrays will be faster or slower for different algorithms. [See documentation](https://docs.dask.org/en/stable/array-chunks.html). We choose a chunk size of $(0.75\cdot\text{worker RAM, number of features})$. Because we will use repeately the features for calculating distances, but the
+  - The number of threads per worker node is low due to the pure Python loop on the Lloyd's implementation, which because of Python's Global Interpreter Lock cannot be parallelized.
+  - Use of DataFrames VS Array given the sklearn fetches a DataFrame, considering the time to turn it into an Array, but DataFrame doesn't implement pairwise. Array is better option in the end as sorting + filter is cheaper than groupby.
 - ## TODO: Results of performance benchmarking and comparison with Dask's ``KMeans()``
 Below is the Dask **_k-means||_** API, from [dask's examples](https://examples.dask.org/machine-learning/training-on-large-datasets.html?highlight=k%20means).
 ``` python
