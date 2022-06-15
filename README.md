@@ -43,4 +43,4 @@ $dask-scheduler
  ssh -L 8080:localhost:8080 -J your_username@gate.cloudveneto.it -L 8080:localhost:8080 root@10.67.22.164  
 
 ```
-
+- Get the link of the notebook from the scheduler VM or open in your browser localhost:8080 and paste the notebook token
