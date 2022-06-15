@@ -29,4 +29,8 @@ Let the scheduler be the machine 10.67.22.164.
 ``` bash
 $dask-scheduler
 ```
- 
+ ## Workers
+ ``` bash
+ $dask-worker  tcp://10.67.22.164:8786 —nworkers <n_workers>
+```
+#Exposing the Scheduler notebook to our machine
