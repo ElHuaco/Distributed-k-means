@@ -23,7 +23,7 @@ Below is the Dask **_k-means||_** API, from [dask's examples](https://examples.d
 km = dask_ml.cluster.KMeans(n_clusters=3, init_max_iter=2, oversampling_factor=10)
 km.fit(X)
 ```
-#Setting Dask Workers and Dask Scheduler
+# Setting Dask Workers and Dask Scheduler
 ## Scheduler 
 Let the scheduler be the machine 10.67.22.164.
 ``` bash
