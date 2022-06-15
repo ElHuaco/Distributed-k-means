@@ -23,10 +23,24 @@ Below is the Dask **_k-means||_** API, from [dask's examples](https://examples.d
 km = dask_ml.cluster.KMeans(n_clusters=3, init_max_iter=2, oversampling_factor=10)
 km.fit(X)
 ```
-#Setting Dask Workers and Dask Scheduler
+# Setting Dask Workers and Dask Scheduler
 ## Scheduler 
 Let the scheduler be the machine 10.67.22.164.
 ``` bash
 $dask-scheduler
 ```
- 
+ ## Workers
+ ``` bash
+ $dask-worker  tcp://10.67.22.164:8786 —nworkers <n_workers>
+```
+# Exposing the Scheduler notebook to our machine
+- Open the folder with the notebook in the scheduler VM
+``` bash
+ jupyter notebook Main.ipynb --allow-root --no-browser --port=8080
+```
+- Open a Terminal in your own machine 
+ ``` bash
+ ssh -L 8080:localhost:8080 -J your_username@gate.cloudveneto.it -L 8080:localhost:8080 root@10.67.22.164  
+
+```
+- Get the link of the notebook from the scheduler VM or open in your browser localhost:8080 and paste the notebook token
