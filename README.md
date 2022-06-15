@@ -33,4 +33,14 @@ $dask-scheduler
  ``` bash
  $dask-worker  tcp://10.67.22.164:8786 —nworkers <n_workers>
 ```
-#Exposing the Scheduler notebook to our machine
+# Exposing the Scheduler notebook to our machine
+- Open the folder with the notebook in the scheduler VM
+``` bash
+ jupyter notebook Main.ipynb --allow-root --no-browser --port=8080
+```
+- Open a Terminal in your own machine 
+ ``` bash
+ ssh -L 8080:localhost:8080 -J your_username@gate.cloudveneto.it -L 8080:localhost:8080 root@10.67.22.164  
+
+```
+
