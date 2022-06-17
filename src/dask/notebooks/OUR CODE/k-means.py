@@ -22,7 +22,7 @@ def closest_c(X, centroids):
     closest_centroid= da.argmin(distances_matrix, axis=1)
     return closest_centroid
     
-def update(X, distances, l):
+def oversample(X, distances, l):
     p = l * distances/distances.sum()
     mask = da.map_blocks(get_random ,p)
     return X[mask,:]
@@ -43,7 +43,7 @@ def k_means_scalable(X, k, l):
     iterations = int(np.round(np.log(inital_cost)))
     for i in range(np.max([iterations, int(k/l)])):
         distances = get_min_distances(X, centroids)
-        new_centroids = update(X, distances, l).compute()
+        new_centroids = oversample(X, distances, l).compute()
         centroids = np.vstack((centroids, new_centroids))
     if len(centroids) < k : #this raises an error it need to be written again
         missing_centroids = k - len(centroids)
