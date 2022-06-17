@@ -9,6 +9,7 @@ def lloyd_scalable (X, k, centroids = None, maxIter = 1000, patience = 1e-6):
         centroids = X[random_index[0]]
     epoch = 1
     len_X = X.shape[1]
+    labels = da.empty((len_X, 1))
     while (epoch < maxIter):
         indeces = da.argmin(dask_ml.metrics.pairwise_distances(X, np.array(centroids)), axis=1)
         new_centroids = da.zeros((k, len_X))
@@ -16,4 +17,5 @@ def lloyd_scalable (X, k, centroids = None, maxIter = 1000, patience = 1e-6):
             new_centroids[i] = X[indeces == i].mean(axis=0)
         epoch = epoch + 1
         centroids = new_centroids
-    return new_centroids.compute()
+    labels = da.map_blocks(set_label, X, indeces)
+    return (new_centroids, indeces)
