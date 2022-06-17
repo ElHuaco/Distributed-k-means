@@ -56,3 +56,11 @@ def k_means_scalable(X, k, l):
     centroid_index, centroid_counts= compute(result)[0]
     centroids_pp = k_means_pp(centroids, centroid_counts, k)
     return centroids_pp #this are the initial centroids for the Lloyd's algorithm.
+
+
+def OUR_pairwise_distance(X, centroids):
+    
+    def min_centroid(y):
+        return X - y
+
+    return np.square(np.array(list(map(min_centroid, centroids)))).sum(axis=2).T
