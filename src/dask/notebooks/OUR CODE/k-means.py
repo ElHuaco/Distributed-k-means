@@ -61,6 +61,6 @@ def k_means_scalable(X, k, l):
 def OUR_pairwise_distance(X, centroids):
     
     def min_centroid(y):
-        return X - y
+        return np.square(x - y).sum(axis=1)
 
-    return np.square(np.array(list(map(min_centroid, centroids)))).sum(axis=2).T
+    return np.array(list(map(min_centroid,y))).T
