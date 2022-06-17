@@ -9,7 +9,7 @@ def k_means_scalable(X, k, l):
     #init_centroids = da.compute(X[idx, np.newaxis])[0]
     for i in range(np.max([iterations, int(k/l)])):
         print('iteration:', i)
-        new_centroids = update(X, distances, l).compute()
+        new_centroids = oversample(X, distances, l).compute()
         print(new_centroids)
         if np.shape(new_centroids) == (0,2):
             continue

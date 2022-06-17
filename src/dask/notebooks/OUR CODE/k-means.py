@@ -14,23 +14,22 @@ def evaluate_cost(X, centroids): # (da.Array, np.array) -> float
 
 def get_min_distances(X, centroids):
     distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids)
-    min_distances= da.min(distances_matrix, axis=1) 
+    min_distances = da.min(distances_matrix, axis=1) 
     return min_distances 
 
 def closest_c(X, centroids):
     distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids)
-    closest_centroid= da.argmin(distances_matrix, axis=1)
+    closest_centroid = da.argmin(distances_matrix, axis=1)
     return closest_centroid
     
 def oversample(X, distances, l):
     p = l * distances/distances.sum()
-    mask = da.map_blocks(get_random ,p)
-    return X[mask,:]
+    return X[da.random.random(X.shape[0]) < p, :]
 
 def k_means_pp(centroids, counts, k): #explore alternatives
-    probs= counts/counts.sum()
-    tot_init= len(centroids)
-    centroid_index=np.arange(len(centroids))
+    probs = counts/counts.sum()
+    tot_init = len(centroids)
+    centroid_index = np.arange(len(centroids))
     final_index= np.random.choice(centroid_index, size=k, replace=False, p=probs)
     return centroids[final_index]
 
@@ -50,7 +49,8 @@ def k_means_scalable(X, k, l):
         random_index = np.random.choice(a = len(X), size=(1, 3))
         additional_centroids = X[random_index[0]].compute()
         centroids = np.vstack((centroids, additional_centroids))#fix this
-    final_distances  = get_min_distances(X, centroids)
+    # COMPUTING DISTANCES TWICE HERE
+    final_distances = get_min_distances(X, centroids)
     final_closest_centroid = closest_c(X, centroids)
     result= da.unique(final_closest_centroid, return_counts=True)
     centroid_index, centroid_counts= compute(result)[0]
