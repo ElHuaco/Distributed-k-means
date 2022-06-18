@@ -38,25 +38,23 @@ def k_means_pp_without_weights(c, weights, k):
     n = c.shape[0]
     idx = np.random.randint(0, n)
     centroids = c[idx, np.newaxis]
+    idx = np.arange(n)
     while (centroids.shape[0] < k):
         distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
         p = distances / distances.sum()
-        centroids = np.vstack((centroids, c[np.random.random(c.shape[0]) < p, :]))
-    if (centroids.shape[0] > k):
-        centroids = np.delete(centroids, np.s_[-1:-1:k-1], axis = 0)
+        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p))
     return centroids
 
 def k_means_pp_weighted(c, weights, k):
     n = c.shape[0]
     idx = np.random.randint(0, n)
     centroids = c[idx, np.newaxis]
+    idx = np.arange(n)
     while (centroids.shape[0] < k):
         distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
         distances = distances * weights
         p = distances / distances.sum()
-        centroids = np.vstack((centroids, c[np.random.random(c.shape[0]) < p, :]))
-    if (centroids.shape[0] > k):
-        centroids = np.delete(centroids, np.s_[-1:-1:k-1], axis = 0)
+        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p))
     return centroids
 
 def k_means_scalable(X, k, l): 
