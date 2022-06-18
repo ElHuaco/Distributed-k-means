@@ -7,21 +7,23 @@ def get_random(p):
     x = np.random.random()
     return x < p
 
-def evaluate_cost(X, centroids): # (da.Array, np.array) -> float
+def evaluate_cost_and_dists(X, centroids): # (da.Array, np.array) -> float
     distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids) 
-    tot = distances_matrix.min(axis=1).sum()
-    return tot
+    min_distances = da.min(distances_matrix, axis=1) 
+    cost = min_distances.sum()
+    return cost, min_distances
 
 def get_min_distances(X, centroids):
     distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids)
     min_distances = da.min(distances_matrix, axis=1) 
-    return min_distances 
+    return min_distances
 
-def closest_c(X, centroids):
+def get_closest_centroids_and_dists(X, centroids):
     distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids)
-    closest_centroid = da.argmin(distances_matrix, axis=1)
-    return closest_centroid
-    
+    min_distances = da.min(distances_matrix, axis=1) 
+    closest_centroids = da.argmin(distances_matrix, axis=1)
+    return closest_centroids, min_distances
+ 
 def oversample(X, distances, l):
     p = l * distances/distances.sum()
     return X[da.random.random(X.shape[0]) < p, :]
@@ -34,29 +36,26 @@ def k_means_pp(centroids, counts, k): #explore alternatives
     return centroids[final_index]
 
 def k_means_scalable(X, k, l): 
-    X=make_da(X)
+    X = make_da(X)
     n = X.shape[0]
     idx = np.random.randint(0, n)
-    centroids = da.compute(X[idx, np.newaxis])[0] #since we computed it, it is a numpy array stored here, not on nodes.
-    inital_cost = evaluate_cost(X ,centroids).compute()
-    iterations = int(np.round(np.log(inital_cost)))
+    centroids = da.compute(X[idx, np.newaxis])[0] #compute() -> np array not stored on nodes.
+    initial_cost, distances = da.compute(*evaluate_cost_and_dists(X ,centroids))
+    iterations = int(np.round(np.log(initial_cost)))
     for i in range(np.max([iterations, int(k/l)])):
-        distances = get_min_distances(X, centroids)
         new_centroids = oversample(X, distances, l).compute()
         centroids = np.vstack((centroids, new_centroids))
-    if len(centroids) < k : #this raises an error it need to be written again
+        distances = get_min_distances(X, centroids)
+    if len(centroids) < k: 
         missing_centroids = k - len(centroids)
         random_index = np.random.choice(a = len(X), size=(1, 3))
         additional_centroids = X[random_index[0]].compute()
-        centroids = np.vstack((centroids, additional_centroids))#fix this
-    # COMPUTING DISTANCES TWICE HERE
-    final_distances = get_min_distances(X, centroids)
-    final_closest_centroid = closest_c(X, centroids)
-    result= da.unique(final_closest_centroid, return_counts=True)
-    centroid_index, centroid_counts= compute(result)[0]
+        centroids = np.vstack((centroids, additional_centroids))
+    closest_centroids, distances = get_closest_centroids_and_dists(X, centroids)
+    result = da.unique(closest_centroids, return_counts=True)
+    centroid_index, centroid_counts = compute(result)[0]
     centroids_pp = k_means_pp(centroids, centroid_counts, k)
-    return centroids_pp #this are the initial centroids for the Lloyd's algorithm.
-
+    return centroids_pp #Return initial centroids for Lloyd's algorithm.
 
 def OUR_pairwise_distance(X, centroids):
     
