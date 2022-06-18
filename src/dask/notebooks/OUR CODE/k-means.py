@@ -35,6 +35,19 @@ def k_means_pp(centroids, counts, k): #explore alternatives
     final_index= np.random.choice(centroid_index, size=k, replace=False, p=probs)
     return centroids[final_index]
 
+def k_means_pp_weighted(c, weights, k):
+    n = c.shape[0]
+    idx = np.random.randint(0, n)
+    centroids = c[idx, np.newaxis]
+    while (centroids.shape[0] < k):
+        distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
+        distances = distances * weights
+        p = distances / distances.sum()
+        centroids = np.vstack((centroids, c[np.random.random(c.shape[0]) < p, :]))
+    if (centroids.shape[0] > k):
+        centroids = np.delete(centroids, np.s_[-1:-1:k-1], axis = 0)
+    return centroids
+
 def k_means_scalable(X, k, l): 
     X = make_da(X)
     n = X.shape[0]
