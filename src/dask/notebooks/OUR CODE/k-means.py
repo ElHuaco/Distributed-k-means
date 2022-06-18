@@ -78,7 +78,7 @@ def k_means_scalable(X, k, l):
         distances = get_min_distances(X, centroids)
     if len(centroids) < k: 
         missing_centroids = k - len(centroids)
-        random_index = np.random.choice(a = len(X), size=(1, 3))
+        random_index = np.random.choice(len(X), size=missing_centroids, replace=False)
         additional_centroids = X[random_index[0]].compute()
         centroids = np.vstack((centroids, additional_centroids))
     closest_centroids, distances = get_closest_centroids_and_dists(X, centroids)
@@ -103,7 +103,7 @@ def k_means_scalable_opt(X, k, l):
         distances = da.minimum(new_distances, distances)
     if len(centroids) < k: 
         missing_centroids = k - len(centroids)
-        random_index = np.random.choice(a = len(X), size=(1, 3))
+        random_index = np.random.choice(len(X), size=missing_centroids, replace=False)
         additional_centroids = X[random_index[0]].compute()
         centroids = np.vstack((centroids, additional_centroids))
     closest_centroids, distances = get_closest_centroids_and_dists(X, centroids)
