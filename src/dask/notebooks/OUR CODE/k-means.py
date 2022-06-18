@@ -28,24 +28,33 @@ def oversample(X, distances, l):
     p = l * distances/distances.sum()
     return X[da.random.random(X.shape[0]) < p, :]
 
-def k_means_pp(centroids, counts, k): #explore alternatives
-    probs = counts/counts.sum()
-    tot_init = len(centroids)
-    centroid_index = np.arange(len(centroids))
-    final_index= np.random.choice(centroid_index, size=k, replace=False, p=probs)
-    return centroids[final_index]
+def k_means_pp_only_weights(c, counts, k): #explore alternatives
+    p = counts/counts.sum()
+    idx = np.arange(c.shape[0])
+    final_index = np.random.choice(idx, size=k, replace=False, p=p)
+    return c[final_index]
+
+def k_means_pp_without_weights(c, weights, k):
+    n = c.shape[0]
+    idx = np.random.randint(0, n)
+    centroids = c[idx, np.newaxis]
+    idx = np.arange(n)
+    while (centroids.shape[0] < k):
+        distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
+        p = distances / distances.sum()
+        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p))
+    return centroids
 
 def k_means_pp_weighted(c, weights, k):
     n = c.shape[0]
     idx = np.random.randint(0, n)
     centroids = c[idx, np.newaxis]
+    idx = np.arange(n)
     while (centroids.shape[0] < k):
         distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
         distances = distances * weights
         p = distances / distances.sum()
-        centroids = np.vstack((centroids, c[np.random.random(c.shape[0]) < p, :]))
-    if (centroids.shape[0] > k):
-        centroids = np.delete(centroids, np.s_[-1:-1:k-1], axis = 0)
+        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p))
     return centroids
 
 def k_means_scalable(X, k, l): 
