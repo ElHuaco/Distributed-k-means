@@ -7,6 +7,14 @@ def get_random(p):
     x = np.random.random()
     return x < p
 
+def OUR_pairwise_distances(X, centroids):
+    
+    def min_centroid(y):
+        return da.sum(da.square(X - y), axis=1)
+
+    return da.apply_along_axis(min_centroid, 1, centroids).T
+    #return dask_ml.metrics.pairwise_distances(X, centroids)
+
 def evaluate_cost_and_dists(X, centroids): # (da.Array, np.array) -> float
     distances_matrix = OUR_pairwise_distances(X, centroids) 
     min_distances = da.min(distances_matrix, axis=1) 
@@ -40,7 +48,7 @@ def k_means_pp_without_weights(c, weights, k):
     centroids = c[idx, np.newaxis]
     idx = np.arange(n)
     while (centroids.shape[0] < k):
-        distances = np.min(OUR_pairwise_distances(c, centroids).compute(), axis=1)
+        distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
         p = distances / distances.sum()
         centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p)]))
     return centroids
@@ -51,7 +59,7 @@ def k_means_pp_weighted(c, weights, k):
     centroids = c[idx, np.newaxis]
     idx = np.arange(n)
     while (centroids.shape[0] < k):
-        distances = np.min(OUR_pairwise_distances(c, centroids).compute(), axis=1)
+        distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
         distances = distances * weights
         p = distances / distances.sum()
         centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p)]))
@@ -79,9 +87,27 @@ def k_means_scalable(X, k, l):
     centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
     return centroids_pp #Return initial centroids for Lloyd's algorithm.
 
-def OUR_pairwise_distances(X, centroids):
-    
-    def min_centroid(y):
-        return da.sum(da.square(X - y), axis=1)
-
-    return da.apply_along_axis(min_centroid, 1, centroids).T
+def k_means_scalable_opt(X, k, l): 
+    X = make_da(X)
+    n_points, n_features = X.shape
+    idx = np.random.randint(0, n_points)
+    centroids = da.compute(X[idx, np.newaxis])[0] #compute() -> np array not stored on nodes.
+    initial_cost, distances = da.compute(*evaluate_cost_and_dists(X ,centroids))
+    iterations = int(np.round(np.log(initial_cost)))
+    for i in range(np.max([iterations, int(k/l)])):
+        new_centroids = oversample(X, distances, l).compute()
+        if np.shape(new_centroids) == (0, n_features):
+            continue
+        new_distances = get_min_distances(X, new_centroids)
+        centroids = np.vstack((centroids, new_centroids))
+        distances = da.minimum(new_distances, distances)
+    if len(centroids) < k: 
+        missing_centroids = k - len(centroids)
+        random_index = np.random.choice(a = len(X), size=(1, 3))
+        additional_centroids = X[random_index[0]].compute()
+        centroids = np.vstack((centroids, additional_centroids))
+    closest_centroids, distances = get_closest_centroids_and_dists(X, centroids)
+    result = da.unique(closest_centroids, return_counts=True)
+    centroid_index, centroid_counts = compute(result)[0]
+    centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
+    return centroids_pp #Return initial centroids for Lloyd's algorithm. 
