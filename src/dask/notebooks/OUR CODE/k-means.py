@@ -8,18 +8,18 @@ def get_random(p):
     return x < p
 
 def evaluate_cost_and_dists(X, centroids): # (da.Array, np.array) -> float
-    distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids) 
+    distances_matrix = OUR_pairwise_distances(X, centroids) 
     min_distances = da.min(distances_matrix, axis=1) 
     cost = min_distances.sum()
     return cost, min_distances
 
 def get_min_distances(X, centroids):
-    distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids)
+    distances_matrix = OUR_pairwise_distances(X, centroids)
     min_distances = da.min(distances_matrix, axis=1) 
     return min_distances
 
 def get_closest_centroids_and_dists(X, centroids):
-    distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids)
+    distances_matrix = OUR_pairwise_distances(X, centroids)
     min_distances = da.min(distances_matrix, axis=1) 
     closest_centroids = da.argmin(distances_matrix, axis=1)
     return closest_centroids, min_distances
@@ -40,9 +40,9 @@ def k_means_pp_without_weights(c, weights, k):
     centroids = c[idx, np.newaxis]
     idx = np.arange(n)
     while (centroids.shape[0] < k):
-        distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
+        distances = np.min(OUR_pairwise_distances(c, centroids).compute(), axis=1)
         p = distances / distances.sum()
-        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p))
+        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p)]))
     return centroids
 
 def k_means_pp_weighted(c, weights, k):
@@ -51,10 +51,10 @@ def k_means_pp_weighted(c, weights, k):
     centroids = c[idx, np.newaxis]
     idx = np.arange(n)
     while (centroids.shape[0] < k):
-        distances = np.min(skl.metrics.pairwise_distances(c, centroids), axis=1)
+        distances = np.min(OUR_pairwise_distances(c, centroids).compute(), axis=1)
         distances = distances * weights
         p = distances / distances.sum()
-        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p))
+        centroids = np.vstack((centroids, c[np.random.choice(idx, size=1, replace=False, p=p)]))
     return centroids
 
 def k_means_scalable(X, k, l): 
@@ -76,12 +76,12 @@ def k_means_scalable(X, k, l):
     closest_centroids, distances = get_closest_centroids_and_dists(X, centroids)
     result = da.unique(closest_centroids, return_counts=True)
     centroid_index, centroid_counts = compute(result)[0]
-    centroids_pp = k_means_pp(centroids, centroid_counts, k)
+    centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
     return centroids_pp #Return initial centroids for Lloyd's algorithm.
 
-def OUR_pairwise_distance(X, centroids):
+def OUR_pairwise_distances(X, centroids):
     
     def min_centroid(y):
         return da.sum(da.square(X - y), axis=1)
 
-    return da.apply_along_axis(min_centroid, 1, centroids).T.compute()
+    return da.apply_along_axis(min_centroid, 1, centroids).T
