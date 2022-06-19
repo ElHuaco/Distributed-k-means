@@ -1,0 +1,155 @@
+######################################
+Thread Benchmark
+######################################
+
+Workers: 9
+Thread: 9 
+Memory: 17.64 GiB
+
+X = 100000 centroids = 8 l = 2
+
+KMeans scalable: 
+CPU times: user 23.3 s, sys: 224 ms, total: 23.6 s
+Wall time: 30.7 s
+
+10 times:
+25.8 s ± 519 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+Lloyds:
+CPU times: user 2min 44s, sys: 1.12 s, total: 2min 45s
+Wall time: 4min 11s
+
+###
+
+Workers: 9
+Thread: 18
+Memory: 35.29  GiB
+
+X = 100000 centroids = 8 l = 2
+
+KMeans scalable: 
+
+CPU times: user 24.8 s, sys: 272 ms, total: 25.1 s
+Wall time: 32.5 s
+
+10 times:
+25.7 s ± 618 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+
+LLoyds:
+
+CPU times: user 3min 20s, sys: 1.61 s, total: 3min 22s
+Wall time: 4min 59s
+
+###
+
+Workers: 9
+Thread: 36
+Memory: 70.58 GiB
+
+KMeans scalable:
+26.2 s ± 792 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+######################################
+Core Benchmark
+######################################
+
+Workers: 9
+Thread: 36
+Memory: 70.58 GiB
+
+KMeans scalable:
+26.2 s ± 792 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+###
+
+Workers: 8
+Thread: 32
+Memory: 62.81 GiB
+
+KMeans scalable:
+25.9 s ± 692 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+###
+
+Workers: 1
+Thread: 4
+Memory: 7.77 GiB
+
+KMeans scalable:
+35.5 s ± 446 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+######################################
+Algo Benchmark
+######################################
+
+Workers: 9
+Thread: 36
+Memory: 70.58 GiB
+
+KMeans scalable:
+26.2 s ± 792 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+###
+
+Dask implementation (Did not work)
+
+Workers: 9
+Thread: 36
+Memory: 70.58 GiB
+
+KMeans:
+1min 50s ± 3.08 s per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+###
+
+Kmeans scalable optimized
+
+Workers: 9
+Thread: 36
+Memory: 70.58 GiB
+
+KMeans scalable:
+27.2 s ± 552 ms per loop (mean ± std. dev. of 10 runs, 1 loop each)
+
+
+######################################
+Chunk Benchmark
+######################################
+
+NUMBER OF CHUNKS
+
+TIME
+###
+1
+
+24.3 s ± 177 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+###
+2 
+
+25.3 s ± 911 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+####
+ 8 
+
+ 25.8 s ± 650 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+####
+16  
+
+23.5 s ± 79.7 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+###
+36
+
+25.5 s ± 764 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+###
+72
+
+27.5 s ± 968 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+###
+144
+
+33.7 s ± 1.45 s per loop (mean ± std. dev. of 5 runs, 1 loop each)
+###
+288
+
+44.1 s ± 1.44 s per loop (mean ± std. dev. of 5 runs, 1 loop each)
+
