@@ -36,13 +36,13 @@ def oversample(X, distances, l):
     p = l * distances/distances.sum()
     return X[da.random.random(X.shape[0]) < p, :]
 
-def k_means_pp_only_weights(c, counts, k): #explore alternatives
-    p = counts/counts.sum()
+def k_means_pp_only_weights(c, weights, k):
+    p = weights/weights.sum()
     idx = np.arange(c.shape[0])
     final_index = np.random.choice(idx, size=k, replace=False, p=p)
     return c[final_index]
 
-def k_means_pp_without_weights(c, weights, k):
+def k_means_pp_without_weights(c, k):
     n = c.shape[0]
     idx = np.random.randint(0, n)
     centroids = c[idx, np.newaxis]
