@@ -84,6 +84,7 @@ def k_means_scalable(X, k, l):
     closest_centroids, distances = get_closest_centroids_and_dists(X, centroids)
     result = da.unique(closest_centroids, return_counts=True)
     centroid_index, centroid_counts = compute(result)[0]
+    # Bug if length of centroid_counts != length of centroids
     centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
     return centroids_pp #Return initial centroids for Lloyd's algorithm.
 

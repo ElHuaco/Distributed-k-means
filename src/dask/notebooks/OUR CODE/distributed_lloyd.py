@@ -13,13 +13,12 @@ def lloyd_scalable (X, k, centroids = None, maxIter = 1000, patience = 1e-6):
     loss_diff = patience + 1.
     loss = 0
     while (epoch < maxIter and loss_diff > patience):
-        distances_matrix = dask_ml.metrics.pairwise_distances(X, centroids)
+        distances_matrix = dask_ml.metrics.pairwise_distances(X, np.array(centroids))
         indeces = da.argmin(distances_matrix, axis=1)
         new_loss = distances_matrix[indeces].sum()
         # Possible bug if new_centroids = zeros and we don't enter the for loop
         new_centroids = da.zeros((k, n_features))
-        print(indeces.max())
-        for i in range(indeces.max()):
+        for i in range(indeces.max()+1):
             new_centroids[i] = X[indeces == i].mean(axis=0)
         epoch = epoch + 1
         loss_diff = da.absolute(new_loss - loss)
