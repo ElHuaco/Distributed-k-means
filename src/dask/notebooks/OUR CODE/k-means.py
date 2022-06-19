@@ -9,28 +9,28 @@ def get_random(p):
 
 def OUR_pairwise_distances(X, centroids):
     
-    def min_centroid(y):
-        return da.sum(da.square(X - y), axis=1)
+    #def min_centroid(y):
+    #    return da.sum(da.square(X - y), axis=1)
 
-    return da.apply_along_axis(min_centroid, 1, centroids).T
-    #return dask_ml.metrics.pairwise_distances(X, centroids)
+    #return da.apply_along_axis(min_centroid, 1, centroids).T
+    return dask_ml.metrics.pairwise_distances(X, centroids)
 
 def evaluate_cost_and_dists(X, centroids): # (da.Array, np.array) -> float
     distances_matrix = OUR_pairwise_distances(X, centroids) 
     min_distances = da.min(distances_matrix, axis=1) 
     cost = min_distances.sum()
-    return cost, min_distances
+    return cost, da.power(min_distances, 2)
 
 def get_min_distances(X, centroids):
     distances_matrix = OUR_pairwise_distances(X, centroids)
     min_distances = da.min(distances_matrix, axis=1) 
-    return min_distances
+    return da.power(min_distances, 2)
 
 def get_closest_centroids_and_dists(X, centroids):
     distances_matrix = OUR_pairwise_distances(X, centroids)
     min_distances = da.min(distances_matrix, axis=1) 
     closest_centroids = da.argmin(distances_matrix, axis=1)
-    return closest_centroids, min_distances
+    return closest_centroids, da.power(min_distances, 2)
  
 def oversample(X, distances, l):
     p = l * distances/distances.sum()
