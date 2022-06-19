@@ -86,7 +86,7 @@ def k_means_scalable(X, k, l):
     centroid_index, centroid_counts = compute(result)[0]
     # Bug if length of centroid_counts != length of centroids
     centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
-    return centroids_pp #Return initial centroids for Lloyd's algorithm.
+    return centroids, centroids_pp #Return initial centroids for Lloyd's algorithm.
 
 def k_means_scalable_opt(X, k, l): 
     X = make_da(X)
@@ -111,4 +111,4 @@ def k_means_scalable_opt(X, k, l):
     result = da.unique(closest_centroids, return_counts=True)
     centroid_index, centroid_counts = compute(result)[0]
     centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
-    return centroids_pp #Return initial centroids for Lloyd's algorithm. 
+    return centroids, centroids_pp #Return initial centroids for Lloyd's algorithm. 
