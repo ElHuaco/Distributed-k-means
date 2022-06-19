@@ -17,7 +17,7 @@ def lloyd_scalable (X, k, centroids = None, maxIter = 1000, patience = 1e-6):
         indeces = da.argmin(distances_matrix, axis=1)
         new_loss = distances_matrix[indeces].sum()
         new_centroids = da.zeros((k, n_features))
-        for i in range(indeces.max()):
+        for i in range(indeces.max()+1):
             new_centroids[i] = X[indeces == i].mean(axis=0)
         epoch = epoch + 1
         loss_diff = da.absolute(new_loss - loss)
