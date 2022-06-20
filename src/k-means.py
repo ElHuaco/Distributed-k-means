@@ -2,14 +2,12 @@ import dask
 import numpy as np
 import dask.array as da
 import dask_ml
+import sklearn as skl
 
-def get_random(p):
-    x = np.random.random()
-    return x < p
 
 def OUR_pairwise_distances(X, centroids):
-    
-    #def min_centroid(y):
+    ## our implementation, a bit slower than dask's.
+    #def min_centroid(y): 
     #    return da.sum(da.square(X - y), axis=1)
 
     #return da.apply_along_axis(min_centroid, 1, centroids).T
@@ -84,11 +82,11 @@ def k_means_scalable(X, k, l):
     closest_centroids, distances = get_closest_centroids_and_dists(X, centroids)
     result = da.unique(closest_centroids, return_counts=True)
     centroid_index, centroid_counts = compute(result)[0]
-    # Bug if length of centroid_counts != length of centroids
     centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
-    return centroids, centroids_pp #Return initial centroids for Lloyd's algorithm (and previous cluster of centroids for visulization purposes)
+    return centroids, centroids_pp 
+    #Return initial centroids for Lloyd's algorithm (and previous cluster of centroids for visulization purposes)
 
-def k_means_scalable_opt(X, k, l): 
+def k_means_scalable_2(X, k, l): #this function doesn't compute ALL the distances every iteration.
     X = make_da(X)
     n_points, n_features = X.shape
     idx = np.random.randint(0, n_points)
@@ -112,3 +110,4 @@ def k_means_scalable_opt(X, k, l):
     centroid_index, centroid_counts = compute(result)[0]
     centroids_pp = k_means_pp_weighted(centroids, centroid_counts, k)
     return centroids, centroids_pp #Return initial centroids for Lloyd's algorithm (and previous cluster of centroids for visulization purposes)
+
